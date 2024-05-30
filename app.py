@@ -39,6 +39,10 @@ def responseFail(message):
     }
 
 #route
+@app.route("/ready", methods=["GET"])
+def ready():
+    return "server ready", 200
+
 @app.route("/api/v1/predict", methods=["POST"])
 def predict():
     if 'photo' not in request.files or request.files['photo'].filename == '':
