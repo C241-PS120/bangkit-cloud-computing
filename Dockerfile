@@ -3,6 +3,6 @@ WORKDIR /app
 COPY . .
 COPY .env .
 COPY requirements.txt requirements.txt
-RUN pip install -r requirement.txt
-CMD ["flask", "--app", "app", "run"]
+RUN pip3 install -r requirement.txt
+CMD ["python3", "-m", "flask", "--app", "app", "run"]
 EXPOSE 9000
