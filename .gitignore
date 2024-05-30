@@ -1,0 +1,6 @@
+keys
+.env
+.vscode
+__pycache__
+openapi.yaml
+temp/model
