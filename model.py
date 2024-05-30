@@ -26,11 +26,11 @@ class Model:
         storage_instance = Storage("model")
         storage_instance.download(os.environ['MODEL_NAME'], os.environ['MODEL_NAME'])
 
-        self.model = models.load_model(Path(f'temp/model/{os.environ['MODEL_NAME']}').resolve())
+        self.model = models.load_model(Path(f"temp/model/{os.environ['MODEL_NAME']}").resolve())
 
     #load the label from local 
     def loadLabel(self):
-        f = open(Path("label/label.txt"))
+        f = open(Path("label/label.txt").resolve())
         self.label = f.readlines()
         f.close()
 

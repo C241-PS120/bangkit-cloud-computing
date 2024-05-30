@@ -3,4 +3,4 @@ keys
 .vscode
 __pycache__
 openapi.yaml
-temp/model
+temp/model/model.h5

@@ -56,7 +56,8 @@ class Storage:
 
             path = Path("temp/model/" + destinationFileName).resolve()
 
-            os.remove(path)
+            if os.path.isfile(path):
+                os.remove(path)
             blob.download_to_filename(path)
         except FileNotFoundError:
             pass
