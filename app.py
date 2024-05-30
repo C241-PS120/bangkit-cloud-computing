@@ -8,6 +8,8 @@ from model import Model
 
 from PIL import Image
 
+from waitress import serve
+
 #initialization
 load_dotenv()
 Storage("model")
@@ -39,6 +41,10 @@ def responseFail(message):
     }
 
 #route
+@app.route("/")
+def index():
+    return "<h1>Hello!</h1>"
+
 @app.route("/ready", methods=["GET"])
 def ready():
     return "server ready", 200
@@ -80,4 +86,9 @@ def predict():
 
 #server run
 if __name__ ==  '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 9000)))
+    deploy = os.environ.get("DEPLOY", "development")
+
+    if(deploy == "development"):    
+        app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+    else:
+        serve(app, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))

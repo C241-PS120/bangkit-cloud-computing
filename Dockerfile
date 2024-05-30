@@ -4,4 +4,5 @@ COPY . .
 COPY .env .
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
-CMD ["python3", "-m", "flask", "--app", "app", "run"]
+EXPOSE 5000
+CMD ["python3", "app.py"]
