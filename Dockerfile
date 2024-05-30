@@ -1,7 +1,8 @@
-FROM python:3.12.3
+FROM python:3.12.3-alpine
 WORKDIR /app
 COPY . .
 COPY .env .
-RUN "pip" "install" "-r" "requirement.txt"
-CMD ["python", "app.py",]
+COPY requirements.txt requirements.txt
+RUN pip install -r requirement.txt
+CMD ["flask", "--app", "app", "run"]
 EXPOSE 9000
