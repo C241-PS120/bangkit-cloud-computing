@@ -24,7 +24,7 @@ class Model:
     #load the model from cloud storage to this instance
     def loadModel(self):
         storage_instance = Storage("model")
-        storage_instance.download(os.environ['MODEL_NAME'], os.environ['MODEL_NAME'])
+        # storage_instance.download(os.environ['MODEL_NAME'], Path("temp/model/" + os.environ['MODEL_NAME']).resolve())
 
         self.model = models.load_model(Path(f"temp/model/{os.environ['MODEL_NAME']}").resolve())
 
@@ -32,22 +32,23 @@ class Model:
     def loadLabel(self):
         f = open(Path("label/label.txt").resolve())
         self.label = f.readlines()
+        self.label = list(map(str.strip,self.label))
         f.close()
 
     #preprocessing the image
-    def preprocessImage(self, image: Image):
+    def preprocessImage(self, image: Image.Image, format: str):
         image_bytes = BytesIO()
 
-        image.save(image_bytes, format="JPEG")
+        image.save(image_bytes, format=format)
 
         image_bytes.seek(0)
-
+        
         processedImage = preprocessing.image.load_img(image_bytes, color_mode= "rgb", target_size=[224, 224])
         processedImage = preprocessing.image.img_to_array(processedImage) / 255.0
         return np.expand_dims(processedImage, axis=0)
     
     #predict given image with this model
-    def predict(self, data):
+    def predict(self, data) -> tuple[str, float]:
         predict = self.model.predict(data)
         index_max = np.argmax(predict[0])
         return self.label[index_max], predict[0][index_max] * 100

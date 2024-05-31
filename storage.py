@@ -4,8 +4,6 @@ import os
 
 from pathlib import Path
 
-import uuid
-
 from PIL import Image
 
 from io import BytesIO
@@ -25,18 +23,26 @@ class Storage:
 
     def initialize(self, storageType: str):
         self.storageType = storageType
-        
+
         if storageType == "model":
-            self.client = storage.Client.from_service_account_json(Path("keys/" + os.environ["MODEL_KEY_FILENAME"]).resolve())
+            self.setStorageClient(Path("keys/" + os.environ["MODEL_KEY_FILENAME"]).resolve())
             self.bucket = self.client.bucket(os.environ["STORAGE_BUCKET_MODEL"])
         elif storageType == "photo":
-            self.client = storage.Client.from_service_account_json(Path("keys/" + os.environ["PHOTO_KEY_FILENAME"]).resolve())
+            self.setStorageClient(Path("keys/" + os.environ["PHOTO_KEY_FILENAME"]).resolve())
             self.bucket = self.client.bucket(os.environ["STORAGE_BUCKET_PHOTO"])
         else:
             raise ValueError(f"Unknown storageType: {storageType}")
 
-    def upload(self, image: Image):
-        imageName = f"{str(uuid.uuid4())}.jpg"
+    def setStorageClient(self, path: Path = None):
+        production = bool(os.environ.get("PRODUCTION", "False") == "True")
+        if production:
+            self.client = storage.Client()
+            return
+        self.client = storage.Client.from_service_account_json(path)
+        return
+
+    def upload(self, id: str, image: Image.Image):
+        imageName = f"{id}.{"jpg"}"
 
         blob = self.bucket.blob(f"upload/{imageName}")
 
@@ -46,7 +52,7 @@ class Storage:
 
         image_bytes.seek(0)
 
-        blob.upload_from_file(image_bytes,  content_type='image/jpeg')
+        blob.upload_from_file(image_bytes, content_type=f'image/jpeg')
 
         return blob.public_url
 
@@ -54,11 +60,9 @@ class Storage:
         try:
             blob = self.bucket.blob(blob_name=blobName)
 
-            path = Path("temp/model/" + destinationFileName).resolve()
-
-            if os.path.isfile(path):
-                os.remove(path)
-            blob.download_to_filename(path)
+            if os.path.isfile(destinationFileName):
+                os.remove(destinationFileName)
+            blob.download_to_filename(destinationFileName)
         except FileNotFoundError:
             pass
         except Exception as e:
