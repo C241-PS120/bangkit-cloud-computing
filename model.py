@@ -36,10 +36,10 @@ class Model:
         f.close()
 
     #preprocessing the image
-    def preprocessImage(self, image: Image.Image, format: str):
+    def preprocessImage(self, image: Image.Image):
         image_bytes = BytesIO()
 
-        image.save(image_bytes, format=format)
+        image.save(image_bytes, format=image.format)
 
         image_bytes.seek(0)
         

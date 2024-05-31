@@ -9,9 +9,6 @@ from model import Model
 from PIL import Image
 import uuid
 
-from rembg import remove
-
-
 from waitress import serve
 
 #initialization
@@ -61,13 +58,12 @@ def predict():
 
     openImage = Image.open(image)
 
-    imageRemoved = remove(openImage)
-    if imageRemoved.mode == 'RGBA':
-        imageRemoved = imageRemoved.convert("RGB")
+    if openImage.mode == 'RGBA':
+        openImage = openImage.convert("RGB")
 
     m = Model()
 
-    data = m.preprocessImage(image=imageRemoved, format=openImage.format)
+    data = m.preprocessImage(image=openImage)
     label, confidentScore = m.predict(data)
 
     responseData = None 
@@ -75,8 +71,7 @@ def predict():
     if(confidentScore >= 90.0):
         id = str(uuid.uuid4())
 
-        # fileUrl = Storage("photo").upload(id, image=openImage)
-        fileUrl = Storage("photo").upload(id, image=imageRemoved)
+        fileUrl = Storage("photo").upload(id, image=openImage)
 
         responseData = {
             "id": id,
