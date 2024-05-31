@@ -76,7 +76,7 @@ def predict():
         responseData = {
             "id": id,
             "label": label, 
-            "suggestion": f"Menurut hasil prediksi, tumbuhan kopimu dalam kondisi {'sehat!' if label == 'Healthy' else f'mengalami penyakit {label}'}, segeralah cari pestisida sebelum tanamanmu rusak!.",
+            "suggestion": f"Menurut hasil prediksi, tumbuhan kopimu dalam kondisi {'sehat!' if label == 'Healthy' else f'mengalami penyakit {label}, segeralah cari pestisida sebelum tanamanmu rusak!.'}",
             "search": label == "Healthy" if None else label.casefold(),
             "imageUrl": fileUrl
         }

@@ -39,7 +39,7 @@ class Model:
     def preprocessImage(self, image: Image.Image):
         image_bytes = BytesIO()
 
-        image.save(image_bytes, format=image.format)
+        image.save(image_bytes, format="JPEG")
 
         image_bytes.seek(0)
         
