@@ -1,21 +1,17 @@
 package main
 
 import (
-	"flag"
+	"errors"
 	"github.com/C241-PS120/bangkit-cloud-computing/database"
+	"github.com/C241-PS120/bangkit-cloud-computing/dto"
 	"github.com/C241-PS120/bangkit-cloud-computing/handler"
 	"github.com/C241-PS120/bangkit-cloud-computing/repository"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"log"
-
 	"github.com/joho/godotenv"
-)
-
-var (
-	port = flag.String("port", ":3000", "Port to listen on")
-	prod = flag.Bool("prod", false, "Enable prefork in Production")
+	"log"
+	"os"
 )
 
 func main() {
@@ -24,29 +20,53 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	// connect to database
-	db := database.GetConnection()
-	//err = db.AutoMigrate(&model.Article{}, &model.Category{}, &model.Symptom{}, &model.Prevention{}, &model.Treatment{})
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	var isProd bool
+	if os.Getenv("ENVIRONMENT") == "prod" {
+		isProd = true
+	}
+
+	db := database.GetConnection(isProd)
 
 	articleRepository := repository.NewArticleRepository(db)
 	articleHandler := handler.NewArticleHandler(articleRepository)
 
-	flag.Parse()
-
 	app := fiber.New(
 		fiber.Config{
-			Prefork: *prod,
+			Prefork:      isProd,
+			AppName:      "Coptas Article API",
+			ErrorHandler: NewErrorHandler(),
 		},
 	)
 	app.Use(recover.New())
 	app.Use(logger.New())
 
-	app.Get("/:id", articleHandler.GetArticleDetail)
-	app.Get("/", articleHandler.GetArticleList)
+	// under development
+	//app.Use(cors.New(cors.Config{
+	//	AllowOrigins:     "*",
+	//	AllowCredentials: true,
+	//}))
 
-	// Listen to the port
-	log.Fatal(app.Listen(*port))
+	api := app.Group("/api")
+	v1 := api.Group("/v1")
+
+	article := v1.Group("/articles")
+	article.Get("/:id", articleHandler.GetArticleDetail)
+	article.Get("/", articleHandler.GetArticleList)
+
+	log.Fatal(app.Listen(":3000"))
+}
+
+func NewErrorHandler() fiber.ErrorHandler {
+	return func(ctx *fiber.Ctx, err error) error {
+		code := fiber.StatusInternalServerError
+		var e *fiber.Error
+		if errors.As(err, &e) {
+			code = e.Code
+		}
+
+		return ctx.Status(code).JSON(dto.Envelope{
+			Success: false,
+			Error:   err.Error(),
+		})
+	}
 }

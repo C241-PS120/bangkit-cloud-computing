@@ -10,16 +10,23 @@ import (
 	"time"
 )
 
-func GetConnection() *gorm.DB {
+func GetConnection(isProd bool) *gorm.DB {
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	dbUser := os.Getenv("DB_USER")
 	dbPass := os.Getenv("DB_PASS")
 	dbName := os.Getenv("DB_NAME")
 
+	var logLevel logger.LogLevel
+	if isProd {
+		logLevel = logger.Error
+	} else {
+		logLevel = logger.Info
+	}
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", dbUser, dbPass, dbHost, dbPort, dbName)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger:                 logger.Default.LogMode(logger.Info),
+		Logger:                 logger.Default.LogMode(logLevel),
 		SkipDefaultTransaction: true,
 	})
 

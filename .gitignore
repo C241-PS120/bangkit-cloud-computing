@@ -1,2 +1,10 @@
 .env
 .toml
+idea/
+vscode/
+tmp/
+
+**/.env
+**/env/
+
+**/idea/
