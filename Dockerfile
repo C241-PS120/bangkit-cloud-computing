@@ -30,7 +30,7 @@ RUN apk -U upgrade \
     && apk add --no-cache dumb-init ca-certificates \
     && chmod +x /app/main
 
-EXPOSE 3000
+EXPOSE 8080
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["/app/main"]
