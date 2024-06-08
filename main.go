@@ -53,7 +53,7 @@ func main() {
 	article.Get("/:id", articleHandler.GetArticleDetail)
 	article.Get("/", articleHandler.GetArticleList)
 
-	log.Fatal(app.Listen(":8080"))
+	log.Fatal(app.Listen("0.0.0.0:8080"))
 }
 
 func NewErrorHandler() fiber.ErrorHandler {
