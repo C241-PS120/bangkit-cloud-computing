@@ -1,7 +1,7 @@
 # Stage 1: Build the Go binary
 FROM golang:1.22.3 AS build
 
-WORKDIR /go/src/github.com/C241-PS120/bangkit-cloud-computing
+WORKDIR /app
 
 ARG DB_HOST
 ARG DB_NAME
@@ -19,18 +19,18 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o main .
+EXPOSE 8080
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o app .
 
 # Stage 2: Create the final image
 FROM alpine:latest AS release
-WORKDIR /app
-COPY --from=build /go/src/github.com/C241-PS120/bangkit-cloud-computing/main .
 
-RUN apk -U upgrade \
-    && apk add --no-cache dumb-init ca-certificates \
-    && chmod +x /app/main
+WORKDIR /app
+
+COPY --from=build /app/app .
+RUN apk --no-cache add ca-certificates tzdata
 
 EXPOSE 8080
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["/app/main"]
+ENTRYPOINT ["/app/app"]
