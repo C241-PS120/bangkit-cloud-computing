@@ -1,6 +1,8 @@
 .env
 .toml
+.air.toml
 idea/
+.idea/
 vscode/
 tmp/
 
