@@ -6,7 +6,7 @@ on:
 
 env:
   PROJECT_ID: c241-ps120
-  GAR_LOCATION: article-registry
+  GAR_LOCATION: asia-southeast2
   SERVICE: article-service
   REGION: asia-southeast2
 
