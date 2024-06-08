@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/C241-PS120/bangkit-cloud-computing/database"
 	"github.com/C241-PS120/bangkit-cloud-computing/dto"
 	"github.com/C241-PS120/bangkit-cloud-computing/handler"
@@ -53,7 +54,11 @@ func main() {
 	article.Get("/:id", articleHandler.GetArticleDetail)
 	article.Get("/", articleHandler.GetArticleList)
 
-	log.Fatal(app.Listen("0.0.0.0:8080"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Fatal(app.Listen(fmt.Sprintf(":%s", port)))
 }
 
 func NewErrorHandler() fiber.ErrorHandler {
