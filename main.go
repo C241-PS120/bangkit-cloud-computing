@@ -22,7 +22,7 @@ func main() {
 	}
 
 	var isProd bool
-	if os.Getenv("ENVIRONMENT") == "prod" {
+	if os.Getenv("ENVIRONMENT") == "production" {
 		isProd = true
 	}
 
@@ -58,7 +58,7 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	log.Fatal(app.Listen(fmt.Sprintf(":%s", port)))
+	log.Fatal(app.Listen(fmt.Sprintf("0.0.0.0:%s", port)))
 }
 
 func NewErrorHandler() fiber.ErrorHandler {

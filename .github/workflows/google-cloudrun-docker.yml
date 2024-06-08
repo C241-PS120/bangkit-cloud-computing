@@ -9,6 +9,7 @@ env:
   GAR_LOCATION: asia-southeast2
   SERVICE: article-service
   REGION: asia-southeast2
+  ENVIRONMENT: production
 
 jobs:
   deploy:
@@ -41,6 +42,7 @@ jobs:
             --build-arg DB_PORT=${{ secrets.DB_PORT }} \
             --build-arg DB_USER=${{ secrets.DB_USER }} \
             --build-arg DB_PASS=${{ secrets.DB_PASS }} \
+            --build-arg ENVIRONMENT=${{ env.ENVIRONMENT }} \
             -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}" ./
           docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}"
 
