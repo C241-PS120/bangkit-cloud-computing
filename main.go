@@ -16,14 +16,15 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	var isProd bool
 	if os.Getenv("ENVIRONMENT") == "production" {
 		isProd = true
+	} else {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 
 	db := database.GetConnection(isProd)
@@ -58,7 +59,7 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	log.Fatal(app.Listen(fmt.Sprintf("0.0.0.0:%s", port)))
+	log.Fatal(app.Listen(fmt.Sprintf(":%s", port)))
 }
 
 func NewErrorHandler() fiber.ErrorHandler {
