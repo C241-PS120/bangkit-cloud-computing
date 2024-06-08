@@ -17,6 +17,10 @@ import (
 
 func main() {
 
+	log.Println(os.Getenv("ENVIRONMENT"))
+	log.Println(os.Getenv("PORT"))
+	log.Println(os.Getenv("DB_HOST"))
+	log.Println(os.Getenv("ENVIRONMENT") == "production")
 	var isProd bool
 	if os.Getenv("ENVIRONMENT") == "production" {
 		isProd = true
