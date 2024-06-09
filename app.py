@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 
 
 from dotenv import load_dotenv
@@ -68,7 +68,7 @@ def predict():
 
     responseData = None 
 
-    if(confidentScore >= 90.0):
+    if(confidentScore >= 70.0):
         id = str(uuid.uuid4())
 
         fileUrl = Storage("photo").upload(id, image=openImage)
@@ -82,7 +82,7 @@ def predict():
         }
         
         return jsonify(responseSuccess(responseData, "Model is predicted successfully")), 201
-    return jsonify(responseFail("An error occurred in detecting the image, please try again with a clearer image.")), 400
+    return jsonify(responseFail("Please try again with a clearer image.")), 400
 
 
 
