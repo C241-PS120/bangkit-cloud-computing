@@ -17,10 +17,6 @@ import (
 
 func main() {
 
-	log.Println(os.Getenv("ENVIRONMENT"))
-	log.Println(os.Getenv("PORT"))
-	log.Println(os.Getenv("DB_NAME"))
-	log.Println(os.Getenv("ENVIRONMENT") == "production")
 	var isProd bool
 	if os.Getenv("ENVIRONMENT") == "production" {
 		isProd = true
@@ -43,14 +39,9 @@ func main() {
 			ErrorHandler: NewErrorHandler(),
 		},
 	)
+
 	app.Use(recover.New())
 	app.Use(logger.New())
-
-	// under development
-	//app.Use(cors.New(cors.Config{
-	//	AllowOrigins:     "*",
-	//	AllowCredentials: true,
-	//}))
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1")

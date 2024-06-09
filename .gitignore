@@ -5,6 +5,7 @@ idea/
 .idea/
 vscode/
 tmp/
+openapi.*
 
 **/.env
 **/env/
