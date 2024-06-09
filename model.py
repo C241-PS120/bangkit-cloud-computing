@@ -24,7 +24,9 @@ class Model:
     #load the model from cloud storage to this instance
     def loadModel(self):
         storage_instance = Storage("model")
-        storage_instance.download(os.environ['MODEL_NAME'], Path("temp/model/" + os.environ['MODEL_NAME']).resolve())
+        production = bool(os.environ.get("PRODUCTION", "False") == "True")
+        if production:
+            storage_instance.download(os.environ['MODEL_NAME'], Path("temp/model/" + os.environ['MODEL_NAME']).resolve())
 
         self.model = models.load_model(Path(f"temp/model/{os.environ['MODEL_NAME']}").resolve())
 
