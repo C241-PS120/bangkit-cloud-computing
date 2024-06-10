@@ -5,11 +5,10 @@ on:
     branches: ["model"]
 
 env:
-  PROJECT_ID: c241-ps120
   GAR_LOCATION: asia-southeast2
   SERVICE: model-service
   REGION: asia-southeast2
-  PRODUCTION: true
+  PRODUCTION: True
 
 jobs:
   deploy:
@@ -37,8 +36,8 @@ jobs:
 
       - name: Build and Push Container
         run: |-
-          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}" ./
-          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}"
+          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}" ./
+          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}"
 
       # END - Docker auth and build
 
@@ -49,10 +48,12 @@ jobs:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           # NOTE: If using a pre-built image, update the image name here
-          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}
+          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}
           env_vars: |-
             PRODUCTION=${{ env.PRODUCTION }}
             MODEL_NAME=${{ secrets.MODEL_NAME }}
+            STORAGE_BUCKET_MODEL=${{ secrets.STORAGE_BUCKET_MODEL }}
+            STORAGE_BUCKET_PHOTO=${{ secrets.STORAGE_BUCKET_PHOTO }}
           flags: |-
             --allow-unauthenticated
             --service-account=${{ secrets.SA_SERVICE }}
