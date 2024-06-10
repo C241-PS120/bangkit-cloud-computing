@@ -34,12 +34,14 @@ class Storage:
             raise ValueError(f"Unknown storageType: {storageType}")
 
     def setStorageClient(self, path: Path = None):
+        prod = os.environ.get("PRODUCTION")
+        print("=====================================")
+        print(prod, type(prod))
         production = bool(os.environ.get("PRODUCTION", "False") == "True")
         if production:
             self.client = storage.Client()
-            return
-        self.client = storage.Client.from_service_account_json(path)
-        return
+        else:
+            self.client = storage.Client.from_service_account_json(path)
 
     def upload(self, id: str, image: Image.Image):
         imageName = f"{id}.{"jpg"}"
