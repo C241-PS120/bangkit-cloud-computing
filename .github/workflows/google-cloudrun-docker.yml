@@ -52,6 +52,7 @@ jobs:
           image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:${{ github.sha }}
           env_vars: |-
             PRODUCTION=${{ env.PRODUCTION }}
+            MODEL_NAME=${{ secrets.MODEL_NAME }}
           flags: |-
             --allow-unauthenticated
             --service-account=${{ secrets.SA_SERVICE }}
