@@ -54,6 +54,8 @@ jobs:
             MODEL_NAME=${{ secrets.MODEL_NAME }}
             STORAGE_BUCKET_MODEL=${{ secrets.STORAGE_BUCKET_MODEL }}
             STORAGE_BUCKET_PHOTO=${{ secrets.STORAGE_BUCKET_PHOTO }}
+            MODEL_KEY_FILENAME=${{ secrets.MODEL_KEY_FILENAME }}
+            PHOTO_KEY_FILENAME=${{ secrets.PHOTO_KEY_FILENAME }}
           flags: |-
             --allow-unauthenticated
             --service-account=${{ secrets.SA_SERVICE }}
