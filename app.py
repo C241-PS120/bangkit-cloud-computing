@@ -89,8 +89,9 @@ def predict():
 #server run
 if __name__ ==  '__main__':
     production = bool(os.environ.get("PRODUCTION", "False") == "True")
+    port = int(os.environ.get("PORT", 8080))
 
     if production:    
-        serve(app, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+        serve(app, host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
     else:
-        app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+        app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
