@@ -59,6 +59,7 @@ jobs:
           flags: |-
             --allow-unauthenticated
             --service-account=${{ secrets.SA_SERVICE }}
+            --memory=2Gi
 
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
