@@ -12,44 +12,52 @@ from io import BytesIO
 
 from pathlib import Path
 
+
 class Model:
     label: list[str]
 
-    #singleton class
+    # singleton class
     def __new__(cls):
-        if not hasattr(cls, 'instance'):
+        if not hasattr(cls, "instance"):
             cls.instance = super(Model, cls).__new__(cls)
         return cls.instance
 
-    #load the model from cloud storage to this instance
+    # load the model from cloud storage to this instance
     def loadModel(self):
         storage_instance = Storage("model")
-        production = bool(os.environ.get("PRODUCTION", "False") == "True")
+        production = os.environ.get("PRODUCTION", "False").lower() == "true"
         if production:
-            storage_instance.download(os.environ['MODEL_NAME'], Path("temp/model/" + os.environ['MODEL_NAME']).resolve())
+            storage_instance.download(
+                os.environ["MODEL_NAME"],
+                Path("temp/model/" + os.environ["MODEL_NAME"]).resolve(),
+            )
 
-        self.model = models.load_model(Path(f"temp/model/{os.environ['MODEL_NAME']}").resolve())
+        self.model = models.load_model(
+            Path(f"temp/model/{os.environ['MODEL_NAME']}").resolve()
+        )
 
-    #load the label from local 
+    # load the label from local
     def loadLabel(self):
         f = open(Path("label/label.txt").resolve())
         self.label = f.readlines()
-        self.label = list(map(str.strip,self.label))
+        self.label = list(map(str.strip, self.label))
         f.close()
 
-    #preprocessing the image
+    # preprocessing the image
     def preprocessImage(self, image: Image.Image):
         image_bytes = BytesIO()
 
         image.save(image_bytes, format="JPEG")
 
         image_bytes.seek(0)
-        
-        processedImage = preprocessing.image.load_img(image_bytes, color_mode= "rgb", target_size=[224, 224])
+
+        processedImage = preprocessing.image.load_img(
+            image_bytes, color_mode="rgb", target_size=[224, 224]
+        )
         processedImage = preprocessing.image.img_to_array(processedImage) / 255.0
         return np.expand_dims(processedImage, axis=0)
-    
-    #predict given image with this model
+
+    # predict given image with this model
     def predict(self, data) -> tuple[str, float]:
         predict = self.model.predict(data)
         index_max = np.argmax(predict[0])

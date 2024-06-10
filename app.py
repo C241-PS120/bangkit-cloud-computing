@@ -11,7 +11,7 @@ import uuid
 
 from waitress import serve
 
-#initialization
+# initialization
 load_dotenv()
 Storage("model")
 Storage("photo")
@@ -20,45 +20,43 @@ m.loadModel()
 m.loadLabel()
 app = Flask(__name__)
 
-#constant
-ALLOWED_MIME_TYPES = {'image/jpeg', 'image/png'}
+# constant
+ALLOWED_MIME_TYPES = {"image/jpeg", "image/png"}
+
 
 #
 def allowed_file(filename):
-    allowed_extensions = {'jpg', 'jpeg', 'png'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+    allowed_extensions = {"jpg", "jpeg", "png"}
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in allowed_extensions
+
 
 def responseSuccess(data, message):
-    return {
-        "status": "success",
-        "message": message,
-        "data": data
-    }
+    return {"status": "success", "message": message, "data": data}
+
 
 def responseFail(message):
-    return{
-        "status": "error",
-        "message": message
-    }
+    return {"status": "error", "message": message}
 
-#route
+
+# route
 @app.route("/")
 def index():
     return "Hello!", 200
 
+
 @app.route("/api/v1/predict", methods=["POST"])
 def predict():
-    if 'photo' not in request.files or request.files['photo'].filename == '':
+    if "photo" not in request.files or request.files["photo"].filename == "":
         return jsonify(responseFail("No Image given")), 400
-    
-    image = request.files['photo']
+
+    image = request.files["photo"]
 
     if image.mimetype not in ALLOWED_MIME_TYPES or not allowed_file(image.filename):
         return jsonify(responseFail("File is not an allowed image format")), 415
 
     openImage = Image.open(image)
 
-    if openImage.mode == 'RGBA':
+    if openImage.mode == "RGBA":
         openImage = openImage.convert("RGB")
 
     m = Model()
@@ -66,32 +64,34 @@ def predict():
     data = m.preprocessImage(image=openImage)
     label, confidentScore = m.predict(data)
 
-    responseData = None 
+    responseData = None
 
-    if(confidentScore >= 70.0):
+    if confidentScore >= 70.0:
         id = str(uuid.uuid4())
 
         fileUrl = Storage("photo").upload(id, image=openImage)
 
         responseData = {
             "id": id,
-            "label": label, 
+            "label": label,
             "suggestion": f"Menurut hasil prediksi, tumbuhan kopimu dalam kondisi {'sehat!' if label == 'Healthy' else f'mengalami penyakit {label}, segeralah cari pestisida sebelum tanamanmu rusak!.'}",
             "search": label == "Healthy" if None else label.casefold(),
-            "imageUrl": fileUrl
+            "imageUrl": fileUrl,
         }
-        
-        return jsonify(responseSuccess(responseData, "Model is predicted successfully")), 201
+
+        return (
+            jsonify(responseSuccess(responseData, "Model is predicted successfully")),
+            201,
+        )
     return jsonify(responseFail("Please try again with a clearer image.")), 400
 
 
-
-#server run
-if __name__ ==  '__main__':
-    production = bool(os.environ.get("PRODUCTION", "False") == "True")
+# server run
+if __name__ == "__main__":
+    production = os.environ.get("PRODUCTION", "False").lower() == "true"
     port = int(os.environ.get("PORT", 8080))
 
-    if production:    
-        serve(app, host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
+    if production:
+        serve(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
     else:
-        app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
+        app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

@@ -34,10 +34,7 @@ class Storage:
             raise ValueError(f"Unknown storageType: {storageType}")
 
     def setStorageClient(self, path: Path = None):
-        prod = os.environ.get("PRODUCTION")
-        print("=====================================")
-        print(prod, type(prod))
-        production = bool(os.environ.get("PRODUCTION", "False") == "True")
+        production = os.environ.get("PRODUCTION", "False").lower() == "true"
         if production:
             self.client = storage.Client()
         else:
