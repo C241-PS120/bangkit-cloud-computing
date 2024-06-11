@@ -58,7 +58,7 @@ def predict():
 
     openImage = Image.open(image)
 
-    removedBgImage = remove(openImage, session=rembgSession, bgcolor=(245, 40, 145, 255))
+    removedBgImage = remove(openImage, session=rembgSession, bgcolor=(0, 0, 0, 255))
     if removedBgImage.mode == "RGBA":
         removedBgImage = removedBgImage.convert("RGB")
 
