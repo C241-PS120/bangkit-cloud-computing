@@ -45,6 +45,3 @@ func GetConnection(isProd bool) *gorm.DB {
 
 	return db
 }
-
-// migrate create -ext sql -dir db/migrations create_users_table
-// migrate -database "mysql://root:BA@rio2024@tcp(localhost:3306)/coptas" -path database/migrations up
