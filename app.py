@@ -1,28 +1,30 @@
 from flask import Flask, request, jsonify
 
-
 from dotenv import load_dotenv
 import os
 from storage import Storage
 from model import Model
+from pathlib import Path
 
 from PIL import Image
+from rembg import remove, new_session
 import uuid
 
 from waitress import serve
 
 # initialization
 load_dotenv()
+os.environ["U2NET_HOME"] = str(Path("temp/model").resolve())
 Storage("model")
 Storage("photo")
 m = Model()
 m.loadModel()
 m.loadLabel()
 app = Flask(__name__)
+rembgSession = new_session()
 
 # constant
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png"}
-
 
 #
 def allowed_file(filename):
@@ -56,12 +58,13 @@ def predict():
 
     openImage = Image.open(image)
 
-    if openImage.mode == "RGBA":
-        openImage = openImage.convert("RGB")
+    removedBgImage = remove(openImage, session=rembgSession)
+    if removedBgImage.mode == "RGBA":
+        removedBgImage = removedBgImage.convert("RGB")
 
     m = Model()
 
-    data = m.preprocessImage(image=openImage)
+    data = m.preprocessImage(image=removedBgImage)
     label, confidentScore = m.predict(data)
 
     responseData = None
@@ -69,7 +72,7 @@ def predict():
     if confidentScore >= 70.0:
         id = str(uuid.uuid4())
 
-        fileUrl = Storage("photo").upload(id, image=openImage)
+        fileUrl = Storage("photo").upload(id, image=removedBgImage)
 
         responseData = {
             "id": id,
