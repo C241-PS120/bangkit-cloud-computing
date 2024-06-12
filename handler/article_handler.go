@@ -1,6 +1,10 @@
 package handler
 
 import (
+	"context"
+	"github.com/C241-PS120/bangkit-cloud-computing/helper"
+	"time"
+
 	"github.com/C241-PS120/bangkit-cloud-computing/dto"
 	"github.com/C241-PS120/bangkit-cloud-computing/dto/converter"
 	"github.com/C241-PS120/bangkit-cloud-computing/model"
@@ -19,6 +23,9 @@ func NewArticleHandler(repo repository.ArticleRepository) *ArticleHandler {
 }
 
 func (h *ArticleHandler) GetArticleDetail(ctx *fiber.Ctx) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx.UserContext(), 5*time.Second)
+	defer cancel()
+
 	id, err := ctx.ParamsInt("id", 0)
 	if id < 1 {
 		return fiber.NewError(fiber.StatusBadRequest, "id is not valid, must be greater than 0")
@@ -28,8 +35,9 @@ func (h *ArticleHandler) GetArticleDetail(ctx *fiber.Ctx) error {
 	}
 
 	var article model.Article
-	if err := h.Repository.GetArticleDetail(id, &article); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	err = h.Repository.GetArticleDetail(timeoutCtx, id, &article)
+	if err != nil {
+		return helper.HandleRequestError(err)
 	}
 
 	return ctx.JSON(dto.Envelope{
@@ -39,9 +47,13 @@ func (h *ArticleHandler) GetArticleDetail(ctx *fiber.Ctx) error {
 }
 
 func (h *ArticleHandler) GetArticleList(ctx *fiber.Ctx) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx.UserContext(), 5*time.Second)
+	defer cancel()
+
 	var articles []model.Article
-	if err := h.Repository.GetArticleList(&articles); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	err := h.Repository.GetArticleList(timeoutCtx, &articles)
+	if err != nil {
+		return helper.HandleRequestError(err)
 	}
 
 	var response []interface{}

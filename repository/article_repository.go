@@ -1,15 +1,17 @@
 package repository
 
 import (
+	"context"
 	"github.com/C241-PS120/bangkit-cloud-computing/model"
 	"gorm.io/gorm"
+	"time"
 )
 
 type ArticleRepository interface {
-	GetArticleDetail(id int, article *model.Article) error
-	GetArticleList(articles *[]model.Article) error
-	CreateOrUpdateArticle(article *model.Article) error
-	DeleteArticle(id int) error
+	GetArticleDetail(ctx context.Context, id int, article *model.Article) error
+	GetArticleList(ctx context.Context, articles *[]model.Article) error
+	CreateOrUpdateArticle(ctx context.Context, article *model.Article) error
+	DeleteArticle(ctx context.Context, id int) error
 }
 
 type articleRepository struct {
@@ -20,22 +22,25 @@ func NewArticleRepository(db *gorm.DB) ArticleRepository {
 	return &articleRepository{db}
 }
 
-func (r *articleRepository) GetArticleDetail(id int, article *model.Article) error {
-	return r.db.Preload("Symptoms").
+func (r *articleRepository) GetArticleDetail(ctx context.Context, id int, article *model.Article) error {
+	return r.db.WithContext(ctx).Preload("Symptoms").
 		Preload("Preventions").
 		Preload("Treatments").
 		Preload("Category").
 		Take(&article, id).Error
 }
 
-func (r *articleRepository) GetArticleList(articles *[]model.Article) error {
-	return r.db.Select("ArticleID", "Title", "ImageURL", "Content").
+func (r *articleRepository) GetArticleList(ctx context.Context, articles *[]model.Article) error {
+	// test timeout
+	time.Sleep(10 * time.Second)
+
+	return r.db.WithContext(ctx).Select("ArticleID", "Title", "ImageURL", "Content").
 		Joins("Category").
 		Find(&articles).Error
 }
 
-func (r *articleRepository) CreateOrUpdateArticle(article *model.Article) error {
-	err := r.db.Transaction(func(tx *gorm.DB) error {
+func (r *articleRepository) CreateOrUpdateArticle(ctx context.Context, article *model.Article) error {
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var category model.Category
 		if err := tx.Where("category_name = ?", article.Category.CategoryName).FirstOrCreate(&category).Error; err != nil {
 			return err
@@ -62,6 +67,6 @@ func (r *articleRepository) CreateOrUpdateArticle(article *model.Article) error 
 	return err
 }
 
-func (r *articleRepository) DeleteArticle(id int) error {
-	return r.db.Delete(&model.Article{}, id).Error
+func (r *articleRepository) DeleteArticle(ctx context.Context, id int) error {
+	return r.db.WithContext(ctx).Delete(&model.Article{}, id).Error
 }
