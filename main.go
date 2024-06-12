@@ -8,10 +8,12 @@ import (
 	"github.com/C241-PS120/bangkit-cloud-computing/handler"
 	"github.com/C241-PS120/bangkit-cloud-computing/repository"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/joho/godotenv"
-	"log"
 	"os"
 )
 
@@ -23,6 +25,7 @@ func main() {
 	} else {
 		err := godotenv.Load()
 		if err != nil {
+			log.Error(err)
 			log.Fatal("Error loading .env file")
 		}
 	}
@@ -42,6 +45,13 @@ func main() {
 
 	app.Use(recover.New())
 	app.Use(logger.New())
+
+	app.Get("/metrics", monitor.New())
+	app.Use(healthcheck.New(
+		healthcheck.Config{
+			LivenessEndpoint:  "/live",
+			ReadinessEndpoint: "/ready",
+		}))
 
 	api := app.Group("/api")
 	v1 := api.Group("/v1")

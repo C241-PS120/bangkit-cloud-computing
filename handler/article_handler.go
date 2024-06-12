@@ -2,14 +2,16 @@ package handler
 
 import (
 	"context"
-	"github.com/C241-PS120/bangkit-cloud-computing/helper"
 	"time"
+
+	"github.com/C241-PS120/bangkit-cloud-computing/helper"
 
 	"github.com/C241-PS120/bangkit-cloud-computing/dto"
 	"github.com/C241-PS120/bangkit-cloud-computing/dto/converter"
 	"github.com/C241-PS120/bangkit-cloud-computing/model"
 	"github.com/C241-PS120/bangkit-cloud-computing/repository"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 type ArticleHandler struct {
@@ -31,12 +33,14 @@ func (h *ArticleHandler) GetArticleDetail(ctx *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "id is not valid, must be greater than 0")
 	}
 	if err != nil {
+		log.Error(err)
 		return fiber.NewError(fiber.StatusBadRequest, "id is not valid, must be an integer")
 	}
 
 	var article model.Article
 	err = h.Repository.GetArticleDetail(timeoutCtx, id, &article)
 	if err != nil {
+		log.Error(err)
 		return helper.HandleRequestError(err)
 	}
 
@@ -53,6 +57,7 @@ func (h *ArticleHandler) GetArticleList(ctx *fiber.Ctx) error {
 	var articles []model.Article
 	err := h.Repository.GetArticleList(timeoutCtx, &articles)
 	if err != nil {
+		log.Error(err)
 		return helper.HandleRequestError(err)
 	}
 

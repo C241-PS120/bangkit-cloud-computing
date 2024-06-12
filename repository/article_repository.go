@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/C241-PS120/bangkit-cloud-computing/model"
 	"gorm.io/gorm"
-	"time"
 )
 
 type ArticleRepository interface {
@@ -31,9 +30,6 @@ func (r *articleRepository) GetArticleDetail(ctx context.Context, id int, articl
 }
 
 func (r *articleRepository) GetArticleList(ctx context.Context, articles *[]model.Article) error {
-	// test timeout
-	time.Sleep(10 * time.Second)
-
 	return r.db.WithContext(ctx).Select("ArticleID", "Title", "ImageURL", "Content").
 		Joins("Category").
 		Find(&articles).Error
