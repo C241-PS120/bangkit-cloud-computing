@@ -2,6 +2,9 @@ package repository
 
 import (
 	"context"
+	"errors"
+	"fmt"
+
 	"github.com/C241-PS120/bangkit-cloud-computing/model"
 	"gorm.io/gorm"
 )
@@ -22,11 +25,17 @@ func NewArticleRepository(db *gorm.DB) ArticleRepository {
 }
 
 func (r *articleRepository) GetArticleDetail(ctx context.Context, id int, article *model.Article) error {
-	return r.db.WithContext(ctx).Preload("Symptoms").
+	err := r.db.WithContext(ctx).Preload("Symptoms").
 		Preload("Preventions").
 		Preload("Treatments").
 		Preload("Category").
 		Take(&article, id).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New(fmt.Sprintf("article with id %d not found", id))
+	} else {
+		return err
+	}
 }
 
 func (r *articleRepository) GetArticleList(ctx context.Context, articles *[]model.Article) error {

@@ -60,6 +60,8 @@ func main() {
 	article.Get("/:id", articleHandler.GetArticleDetail)
 	article.Get("/", articleHandler.GetArticleList)
 
+	app.Use(handler.NotFoundHandler)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
