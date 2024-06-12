@@ -32,14 +32,14 @@ func (r *articleRepository) GetArticleDetail(ctx context.Context, id int, articl
 		Take(&article, id).Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return errors.New(fmt.Sprintf("article with id %d not found", id))
+		return fmt.Errorf("article with id %d not found", id)
 	} else {
 		return err
 	}
 }
 
 func (r *articleRepository) GetArticleList(ctx context.Context, articles *[]model.Article) error {
-	return r.db.WithContext(ctx).Select("ArticleID", "Title", "ImageURL", "Content").
+	return r.db.WithContext(ctx).Select("ArticleID", "Title", "ImageURL", "Content", "CreatedAt", "UpdatedAt").
 		Joins("Category").
 		Find(&articles).Error
 }
