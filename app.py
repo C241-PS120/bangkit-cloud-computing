@@ -15,7 +15,6 @@ from waitress import serve
 # initialization
 load_dotenv()
 os.environ["U2NET_HOME"] = str(Path("temp/model").resolve())
-os.environ["MODEL_CHECKSUM_DISABLED"] = "true"
 Storage("model")
 Storage("photo")
 m = Model()
@@ -70,7 +69,7 @@ def predict():
 
     responseData = None
 
-    if confidentScore >= 70.0:
+    if confidentScore >= 80.0:
         id = str(uuid.uuid4())
 
         fileUrl = Storage("photo").upload(id, image=removedBgImage)
