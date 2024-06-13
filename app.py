@@ -15,6 +15,7 @@ from waitress import serve
 # initialization
 load_dotenv()
 os.environ["U2NET_HOME"] = str(Path("temp/model").resolve())
+os.environ["MODEL_CHECKSUM_DISABLED"] = "true"
 Storage("model")
 Storage("photo")
 m = Model()
