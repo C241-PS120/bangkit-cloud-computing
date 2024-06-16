@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 from dotenv import load_dotenv
 import os
@@ -12,6 +13,8 @@ import uuid
 
 from waitress import serve
 
+from symptoms import getSymptoms
+
 # initialization
 load_dotenv()
 os.environ["U2NET_HOME"] = str(Path("temp/model").resolve())
@@ -21,6 +24,7 @@ m = Model()
 m.loadModel()
 m.loadLabel()
 app = Flask(__name__)
+CORS(app)
 rembgSession = new_session()
 
 # constant
@@ -45,6 +49,11 @@ def responseFail(message):
 def index():
     return "Hello!", 200
 
+@app.route("/login", methods=["POST"])
+def login():
+    if request.json["email"] == "admin@gmail.com" and request.json["password"] == "apalah123":
+        return jsonify({"valid": True}), 201
+    return jsonify({"valid": False}), 201
 
 @app.route("/api/v1/predict", methods=["POST"])
 def predict():
@@ -80,6 +89,7 @@ def predict():
             "suggestion": f"Menurut hasil prediksi, tumbuhan kopimu dalam kondisi {'sehat!' if label == 'Healthy' else f'mengalami penyakit {label}, segeralah cari pestisida sebelum tanamanmu rusak!.'}",
             "search": label == "Healthy" if None else label.casefold(),
             "imageUrl": fileUrl,
+            "symptoms": getSymptoms(label)
         }
 
         return (
