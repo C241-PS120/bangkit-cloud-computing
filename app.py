@@ -8,7 +8,6 @@ from model import Model
 from pathlib import Path
 
 from PIL import Image
-from rembg import remove, new_session
 import uuid
 
 from waitress import serve
@@ -17,7 +16,6 @@ from symptoms import getSymptoms
 
 # initialization
 load_dotenv()
-os.environ["U2NET_HOME"] = str(Path("temp/model").resolve())
 Storage("model")
 Storage("photo")
 m = Model()
@@ -25,7 +23,6 @@ m.loadModel()
 m.loadLabel()
 app = Flask(__name__)
 CORS(app)
-rembgSession = new_session()
 
 # constant
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png"}
@@ -67,21 +64,20 @@ def predict():
 
     openImage = Image.open(image)
 
-    removedBgImage = remove(openImage, session=rembgSession, bgcolor=(0, 0, 0, 255))
-    if removedBgImage.mode == "RGBA":
-        removedBgImage = removedBgImage.convert("RGB")
+    if openImage.mode == "RGBA":
+        openImage = openImage.convert("RGB")
 
     m = Model()
 
-    data = m.preprocessImage(image=removedBgImage)
+    data = m.preprocessImage(image=openImage)
     label, confidentScore = m.predict(data)
 
     responseData = None
 
-    if confidentScore >= 80.0:
+    if confidentScore >= 60.0:
         id = str(uuid.uuid4())
 
-        fileUrl = Storage("photo").upload(id, image=removedBgImage)
+        fileUrl = Storage("photo").upload(id, image=openImage)
 
         responseData = {
             "id": id,
