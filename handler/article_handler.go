@@ -192,3 +192,25 @@ func (h *ArticleHandler) DeleteArticle(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusNoContent).JSON(dto.Envelope{Message: "Article deleted successfully"})
 }
+
+func (h *ArticleHandler) GetArticleByLabel(ctx *fiber.Ctx) error {
+	timeoutCtx, cancel := context.WithTimeout(ctx.UserContext(), 5*time.Second)
+	defer cancel()
+
+	label := ctx.Params("label")
+	if label == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "Label is required")
+	}
+
+	var article model.Article
+	err := h.Repository.GetArticleByLabel(timeoutCtx, label, &article)
+	if err != nil {
+		log.Error(err)
+		return helper.HandleRequestError(err)
+	}
+
+	return ctx.JSON(dto.Envelope{
+		Success: true,
+		Data:    converter.ArticleToResponse(&article),
+	})
+}

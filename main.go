@@ -63,6 +63,9 @@ func main() {
 	articles.Put("/:id", articleHandler.UpdateArticle)
 	articles.Delete("/:id", articleHandler.DeleteArticle)
 
+	label := v1.Group("/label")
+	label.Get("/:label", articleHandler.GetArticleByLabel)
+
 	app.Use(handler.NotFoundHandler)
 
 	port := os.Getenv("PORT")

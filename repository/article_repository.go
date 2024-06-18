@@ -10,7 +10,7 @@ import (
 
 type ArticleRepository interface {
 	GetArticleById(ctx context.Context, id int, article *model.Article) error
-	GetArticleByLabel(ctx context.Context, label string, articles *[]model.Article) error
+	GetArticleByLabel(ctx context.Context, label string, article *model.Article) error
 	GetArticleList(ctx context.Context, articles *[]model.Article) error
 	CreateArticle(ctx context.Context, article *model.Article) error
 	UpdateArticle(ctx context.Context, article *model.Article) error
@@ -42,16 +42,18 @@ func (r *articleRepository) GetArticleById(ctx context.Context, id int, article 
 	}
 }
 
-func (r *articleRepository) GetArticleByLabel(ctx context.Context, label string, articles *[]model.Article) error {
+func (r *articleRepository) GetArticleByLabel(ctx context.Context, label string, article *model.Article) error {
+	// return error if label name is not found
 	err := r.db.WithContext(ctx).Model(&model.Article{}).
-		Preload("Disease").
-		Preload("Disease.Plants").
+		Joins("JOIN label ON article.label_id = label.label_id").
 		Preload("Symptoms").
 		Preload("Preventions").
 		Preload("Treatments").
+		Preload("Disease").
+		Preload("Disease.Plants").
 		Preload("Label").
-		Where("label_name = ?", label).
-		Find(&articles).Error
+		Where("label.label_name = ?", label).
+		Take(article).Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return fmt.Errorf("article with label %s not found", label)
