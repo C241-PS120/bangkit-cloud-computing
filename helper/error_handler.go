@@ -3,6 +3,7 @@ package helper
 import (
 	"context"
 	"errors"
+	"gorm.io/gorm"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -12,6 +13,8 @@ func HandleRequestError(err error) *fiber.Error {
 		return fiber.NewError(fiber.StatusRequestTimeout, "Request was canceled by the client.")
 	} else if errors.Is(err, context.DeadlineExceeded) {
 		return fiber.NewError(fiber.StatusRequestTimeout, "Request timed out. Please try again.")
+	} else if errors.Is(err, gorm.ErrRecordNotFound) {
+		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	} else {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
