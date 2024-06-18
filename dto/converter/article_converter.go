@@ -19,8 +19,8 @@ func ArticleToResponse(article *model.Article) *dto.ArticleResponse {
 		Preventions:    listPreventionToString(article.Preventions),
 		Treatments:     ListTreatmentToObjectResponse(article.Treatments),
 		Plants:         listPlantsToString(article.Disease.Plants),
-		CreatedAt:      article.CreatedAt,
-		UpdatedAt:      article.UpdatedAt,
+		CreatedAt:      article.CreatedAt.Format("2 Jan 2006"),
+		UpdatedAt:      article.UpdatedAt.Format("2 Jan 2006"),
 	}
 }
 

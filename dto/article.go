@@ -1,7 +1,5 @@
 package dto
 
-import "time"
-
 type ArticleResponse struct {
 	ArticleID      int               `json:"article_id"`
 	Title          string            `json:"title"`
@@ -15,8 +13,8 @@ type ArticleResponse struct {
 	Preventions    []string          `json:"preventions,omitempty"`
 	Treatments     map[string]string `json:"treatments,omitempty"`
 	Plants         []string          `json:"plants,omitempty"`
-	CreatedAt      time.Time         `json:"created_at"`
-	UpdatedAt      time.Time         `json:"updated_at"`
+	CreatedAt      string            `json:"created_at"`
+	UpdatedAt      string            `json:"updated_at"`
 }
 
 type ArticleRequest struct {
