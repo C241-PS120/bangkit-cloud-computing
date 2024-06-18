@@ -43,7 +43,6 @@ func (r *articleRepository) GetArticleById(ctx context.Context, id int, article 
 }
 
 func (r *articleRepository) GetArticleByLabel(ctx context.Context, label string, article *model.Article) error {
-	// return error if label name is not found
 	err := r.db.WithContext(ctx).Model(&model.Article{}).
 		Joins("JOIN label ON article.label_id = label.label_id").
 		Preload("Symptoms").
