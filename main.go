@@ -56,9 +56,12 @@ func main() {
 	api := app.Group("/api")
 	v1 := api.Group("/v1")
 
-	article := v1.Group("/articles")
-	article.Get("/:id", articleHandler.GetArticleDetail)
-	article.Get("/", articleHandler.GetArticleList)
+	articles := v1.Group("/articles")
+	articles.Get("/:id", articleHandler.GetArticleDetail)
+	articles.Get("/", articleHandler.GetArticleList)
+	articles.Post("/", articleHandler.CreateArticle)
+	articles.Put("/:id", articleHandler.UpdateArticle)
+	articles.Delete("/:id", articleHandler.DeleteArticle)
 
 	app.Use(handler.NotFoundHandler)
 
