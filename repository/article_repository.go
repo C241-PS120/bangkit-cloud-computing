@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/C241-PS120/bangkit-cloud-computing/model"
 	"gorm.io/gorm"
@@ -26,7 +25,7 @@ func NewArticleRepository(db *gorm.DB) ArticleRepository {
 }
 
 func (r *articleRepository) GetArticleById(ctx context.Context, id int, article *model.Article) error {
-	err := r.db.WithContext(ctx).
+	return r.db.WithContext(ctx).
 		Preload("Symptoms").
 		Preload("Preventions").
 		Preload("Treatments").
@@ -34,16 +33,10 @@ func (r *articleRepository) GetArticleById(ctx context.Context, id int, article 
 		Preload("Disease.Plants").
 		Preload("Label").
 		Take(article, id).Error
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return fmt.Errorf("article with id %d not found", id)
-	} else {
-		return err
-	}
 }
 
 func (r *articleRepository) GetArticleByLabel(ctx context.Context, label string, article *model.Article) error {
-	err := r.db.WithContext(ctx).Model(&model.Article{}).
+	return r.db.WithContext(ctx).Model(&model.Article{}).
 		Joins("JOIN label ON article.label_id = label.label_id").
 		Preload("Symptoms").
 		Preload("Preventions").
@@ -53,12 +46,6 @@ func (r *articleRepository) GetArticleByLabel(ctx context.Context, label string,
 		Preload("Label").
 		Where("label.label_name = ?", label).
 		Take(article).Error
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return fmt.Errorf("article with label %s not found", label)
-	} else {
-		return err
-	}
 }
 
 func (r *articleRepository) GetArticleList(ctx context.Context, articles *[]model.Article) error {
