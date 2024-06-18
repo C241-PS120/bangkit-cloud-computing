@@ -16,3 +16,14 @@ func HandleRequestError(err error) *fiber.Error {
 		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 }
+
+func GetIdFromRequest(ctx *fiber.Ctx) (int, error) {
+	id, err := ctx.ParamsInt("id")
+	if err != nil {
+		return 0, fiber.NewError(fiber.StatusBadRequest, "id is not valid, must be an integer")
+	}
+	if id < 1 {
+		return 0, fiber.NewError(fiber.StatusBadRequest, "id is not valid, must be greater than 0")
+	}
+	return id, nil
+}
