@@ -77,7 +77,7 @@ Storage Class   : Standard
 
 <img src="https://www.svgrepo.com/show/375389/cloud-sql.svg" width="120" height="100"/>
 
-Firestore: For storing the Article
+Cloud SQL: For storing the Article
 
 Service details:
 
