@@ -2,11 +2,11 @@ name: Build and Deploy to Cloud Run
 
 on:
   push:
-    branches: [ "article" ]
+    branches: ["article"]
 
 env:
   GAR_LOCATION: asia-southeast2
-  SERVICE: article-service  # the image name will be the same as the service name
+  SERVICE: article-service # the image name will be the same as the service name
   REGION: asia-southeast2
   ENVIRONMENT: production
 
@@ -14,8 +14,8 @@ jobs:
   deploy:
     # Add 'id-token' with the intended permissions for workload identity federation
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: "read"
+      id-token: "write"
 
     runs-on: ubuntu-latest
     steps:
@@ -24,11 +24,11 @@ jobs:
 
       - name: Google Auth
         id: auth
-        uses: 'google-github-actions/auth@v2'
+        uses: "google-github-actions/auth@v2"
         with:
-          token_format: 'access_token'
-          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
-          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
+          token_format: "access_token"
+          workload_identity_provider: "${{ secrets.WIF_PROVIDER }}"
+          service_account: "${{ secrets.WIF_SERVICE_ACCOUNT }}"
 
       - name: Configure Docker to use gcloud
         run: |-
@@ -55,6 +55,8 @@ jobs:
             DB_PORT=${{ secrets.DB_PORT }}
             DB_USER=${{ secrets.DB_USER }}
             DB_PASS=${{ secrets.DB_PASS }}
+            STORAGE_BUCKET_ARTICLE=${{ secrets.STORAGE_BUCKET_ARTICLE }}
+            STORAGE_UPLOAD_PATH=${{ secrets.STORAGE_UPLOAD_PATH }}
             ENVIRONMENT=${{ env.ENVIRONMENT }}
           flags: |-
             --allow-unauthenticated
