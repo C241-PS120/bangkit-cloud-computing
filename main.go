@@ -13,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"os"
 )
@@ -45,6 +46,7 @@ func main() {
 
 	app.Use(recover.New())
 	app.Use(logger.New())
+	app.Use(cors.New())
 
 	app.Get("/metrics", monitor.New())
 	app.Use(healthcheck.New(
