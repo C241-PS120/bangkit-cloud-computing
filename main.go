@@ -9,12 +9,14 @@ import (
 	"github.com/C241-PS120/bangkit-cloud-computing/repository"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/joho/godotenv"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -45,6 +47,18 @@ func main() {
 
 	app.Use(recover.New())
 	app.Use(logger.New())
+	app.Use(cors.New(cors.Config{
+		AllowHeaders:     "Origin,Content-Type,Accept,Content-Length,Accept-Language,Accept-Encoding,Connection,Access-Control-Allow-Origin",
+		AllowCredentials: true,
+		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS",
+		AllowOriginsFunc: func(origin string) bool {
+			// Allow all origins from localhost or 127.0.0.1 with any port
+			if strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://127.0.0.1:") {
+				return true
+			}
+			return true
+		},
+	}))
 
 	app.Get("/metrics", monitor.New())
 	app.Use(healthcheck.New(
