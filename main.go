@@ -38,7 +38,6 @@ func main() {
 
 	app := fiber.New(
 		fiber.Config{
-			Prefork:      isProd,
 			AppName:      "Coptas Article API",
 			ErrorHandler: NewErrorHandler(),
 		},
