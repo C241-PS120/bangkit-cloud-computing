@@ -17,6 +17,8 @@ Google Cloud Platform (GCP) is a Google-provided set of cloud computing services
 
 ## Technology Used for Model Service
 
+[Model Repository](https://github.com/C241-PS120/bangkit-cloud-computing/tree/model)
+
 ### Cloud Run
 
 <img src="https://www.svgrepo.com/show/375383/cloud-run.svg" width="100" height="70"/>
@@ -45,6 +47,8 @@ Storage Class   : Standard
 ```
 
 ## Technology Used for Article Service
+
+[Article Repository](https://github.com/C241-PS120/bangkit-cloud-computing/tree/article)
 
 ### Cloud Run
 
