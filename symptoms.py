@@ -25,4 +25,4 @@ def getSymptoms(label: str):
     if label == "Phoma": 
         return phoma
     if label == "Healthy":
-        return []
+        return ["Tumbuhan kopi Anda dalam kondisi sehat"]
