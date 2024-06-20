@@ -63,6 +63,7 @@ jobs:
             --service-account=${{ secrets.SA_SERVICE }}
             --memory=512Mi
             --cpu=1
+            --add-cloudsql-instances=${{ secrets.CLOUD_SQL_INSTANCE }}
 
       # If required, use the Cloud Run url output in later steps
       - name: Show Output
