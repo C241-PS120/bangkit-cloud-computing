@@ -6,7 +6,7 @@ _The cloud services used_
 <img src="https://github.com/C241-PS120/.github/blob/main/profile/image/cloud-infrastructure.png?raw=true" width="800"/>
 </p>
 
-_CI/CD Implementation on GitHub Actions with Keyless Authentication_
+_CI/CD Implementation on GitHub Actions with Keyless Authentication using Workload Identity Federation_
 <p style="text-align: center; background-color: #eee; display: inline-block; padding: 14px 20px; border-radius: 15px;">
 <img src="https://github.com/C241-PS120/bangkit-cloud-computing/assets/87903309/37e1c3c3-9d84-43f3-af07-e7a455d50d8f?raw=true" width="800"/>
 </p>
