@@ -20,6 +20,8 @@ _CI/CD Implementation on GitHub Actions with Keyless Authentication_
 
 Google Cloud Platform (GCP) is a Google-provided set of cloud computing services. It is a platform that offers computing infrastructure and services for running applications, storing and managing data, and developing software solutions.
 
+## API Documentation
+[Bump.sh - Coptas Backend API Documentation](https://bump.sh/coptas/doc/backend-api)
 
 ## Technology Used for Model Service
 
